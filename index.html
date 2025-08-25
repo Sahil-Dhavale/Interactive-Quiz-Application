@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Development Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 25px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #007bff;
+        }
+        .user-info, .quiz-section, .result-section, .certificate-section {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .user-info.active, .quiz-section.active, .result-section.active, .certificate-section.active {
+            display: flex;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .question-container {
+            margin-bottom: 20px;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .options label:hover {
+            background-color: #f1f1f1;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+        .feedback {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .feedback.correct {
+            color: green;
+        }
+        .feedback.incorrect {
+            color: red;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result-display {
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #certificate-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #certificate-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .certificate {
+            border: 2px solid #007bff;
+            padding: 40px;
+            border-radius: 10px;
+            background-color: #fff;
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .certificate h1 {
+            font-size: 2.5em;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .certificate h2 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .certificate p {
+            font-size: 1.2em;
+            color: #555;
+            line-height: 1.5;
+        }
+        .certificate .name-placeholder {
+            font-weight: bold;
+            font-size: 1.5em;
+            color: #000;
+            margin: 15px 0;
+            text-transform: capitalize;
+        }
+        .certificate .score-placeholder {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 1.4em;
+        }
+        .signature {
+            margin-top: 30px;
+            text-align: right;
+        }
+        .signature p {
+            font-style: italic;
+            border-top: 1px solid #333;
+            display: inline-block;
+            padding-top: 5px;
+        }
+        .date {
+            text-align: left;
+            margin-top: 20px;
+            font-size: 1em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="user-info active" id="userInfoSection">
+            <h2>Enter Your Details</h2>
+            <label for="userName">Full Name:</label>
+            <input type="text" id="userName" placeholder="Enter your full name" required>
+            <label for="userEmail">Email:</label>
+            <input type="email" id="userEmail" placeholder="Enter your email" required>
+            <button onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div class="quiz-section" id="quizSection">
+            <h1>Frontend Development Quiz</h1>
+            <div id="quiz-container"></div>
+            <button onclick="submitQuiz()">Submit Quiz</button>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <h2>Quiz Results</h2>
+            <div id="result-display"></div>
+            <div id="certificate-link"></div>
+        </div>
+
+        <div class="certificate-section" id="certificateSection">
+            <div class="certificate">
+                <h1>Certificate of Completion</h1>
+                <h2>For successfully completing the Frontend Development Quiz</h2>
+                <p>This certifies that</p>
+                <div class="name-placeholder" id="certName"></div>
+                <p>has successfully completed the quiz with a score of</p>
+                <div class="score-placeholder" id="certScore"></div>
+                <p class="date">Date: <span id="certDate"></span></p>
+                <div class="signature">
+                    <p>Internship Coordinator</p>
+                </div>
+            </div>
+            <button onclick="window.print()">Print/Download Certificate</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What does HTML stand for?",
+                options: ["Hyper Text Markup Language", "Hyperlink and Text Markup Language", "Home Tool Markup Language", "Hyper Tool Markup Language"],
+                answer: "Hyper Text Markup Language"
+            },
+            {
+                question: "Which of the following is NOT a JavaScript framework?",
+                options: ["React", "Angular", "Vue", "Django"],
+                answer: "Django"
+            },
+            {
+                question: "What is the correct way to link an external CSS file?",
+                options: ["<style src='style.css'>", "<link rel='stylesheet' href='style.css'>", "<css href='style.css'>", "<stylesheet>style.css</stylesheet>"],
+                answer: "<link rel='stylesheet' href='style.css'>"
+            },
+            {
+                question: "What is the purpose of CSS?",
+                options: ["To add interactivity to a website", "To structure the content of a webpage", "To style the visual appearance of a webpage", "To manage server-side logic"],
+                answer: "To style the visual appearance of a webpage"
+            },
+            {
+                question: "How do you declare a variable in JavaScript?",
+                options: ["variable myVar;", "var myVar;", "v myVar;", "new myVar;"],
+                answer: "var myVar;"
+            },
+            {
+                question: "Which HTML tag is used for creating a hyperlink?",
+                options: ["<link>", "<a>", "<href>", "<hlink>"],
+                answer: "<a>"
+            },
+            {
+                question: "What is the box model in CSS?",
+                options: ["A model for creating responsive layouts", "A container for holding content", "A layout model that represents elements as rectangular boxes", "A way to animate elements"],
+                answer: "A layout model that represents elements as rectangular boxes"
+            },
+            {
+                question: "Which of these is used for client-side scripting?",
+                options: ["Python", "PHP", "JavaScript", "Java"],
+                answer: "JavaScript"
+            },
+            {
+                question: "What is the purpose of the 'git pull' command?",
+                options: ["To push changes to the remote repository", "To fetch and merge changes from the remote repository", "To create a new branch", "To initialize a new repository"],
+                answer: "To fetch and merge changes from the remote repository"
+            },
+            {
+                question: "How do you select an element with the ID 'header' in CSS?",
+                options: [".header", "#header", "element.header", "header"],
+                answer: "#header"
+            },
+            {
+                question: "Which keyword is used to define a constant in JavaScript?",
+                options: ["let", "var", "const", "static"],
+                answer: "const"
+            },
+            {
+                question: "What is the purpose of the 'viewport' meta tag?",
+                options: ["To define the content language", "To control the page's dimensions on different devices", "To add keywords for search engines", "To specify character encoding"],
+                answer: "To control the page's dimensions on different devices"
+            },
+            {
+                question: "Which property is used to change the background color in CSS?",
+                options: ["color", "bgcolor", "background-color", "background"],
+                answer: "background-color"
+            },
+            {
+                question: "What does 'DOM' stand for?",
+                options: ["Document Object Model", "Design Oriented Model", "Data Object Module", "Digital Output Machine"],
+                answer: "Document Object Model"
+            },
+            {
+                question: "What is the difference between '==' and '===' in JavaScript?",
+                options: ["'==' checks for value equality, '===' checks for value and type equality", "'==' checks for value and type equality, '===' checks for value equality", "They are identical", "'===' is for strict mode"],
+                answer: "'==' checks for value equality, '===' checks for value and type equality"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let quizCompleted = false;
+        let userName = '';
+        let userEmail = '';
+        
+        const userInfoSection = document.getElementById('userInfoSection');
+        const quizSection = document.getElementById('quizSection');
+        const resultSection = document.getElementById('resultSection');
+        const certificateSection = document.getElementById('certificateSection');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultDisplay = document.getElementById('result-display');
+        const certificateLink = document.getElementById('certificate-link');
+        const certName = document.getElementById('certName');
+        const certScore = document.getElementById('certScore');
+        const certDate = document.getElementById('certDate');
+
+        function startQuiz() {
+            userName = document.getElementById('userName').value;
+            userEmail = document.getElementById('userEmail').value;
+
+            if (userName.trim() === '' || userEmail.trim() === '') {
+                alert('Please enter your full name and email to start the quiz.');
+                return;
+            }
+
+            userInfoSection.classList.remove('active');
+            quizSection.classList.add('active');
+            displayQuiz();
+        }
+
+        function displayQuiz() {
+            quizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question-container');
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    <div class="options" id="options-${index}">
+                        ${q.options.map((option, i) => `
+                            <label>
+                                <input type="radio" name="question-${index}" value="${option}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        function submitQuiz() {
+            if (quizCompleted) return;
+
+            let allAnswered = true;
+            score = 0;
+            quizData.forEach((q, index) => {
+                const optionsDiv = document.getElementById(`options-${index}`);
+                const feedbackDiv = document.getElementById(`feedback-${index}`);
+                const selectedOption = optionsDiv.querySelector(`input[name="question-${index}"]:checked`);
+
+                if (!selectedOption) {
+                    allAnswered = false;
+                    return;
+                }
+
+                if (selectedOption.value === q.answer) {
+                    score++;
+                    feedbackDiv.textContent = '✅ Correct!';
+                    feedbackDiv.classList.add('correct');
+                    feedbackDiv.classList.remove('incorrect');
+                } else {
+                    feedbackDiv.textContent = `❌ Incorrect. The correct answer is: ${q.answer}`;
+                    feedbackDiv.classList.add('incorrect');
+                    feedbackDiv.classList.remove('correct');
+                }
+            });
+
+            if (!allAnswered) {
+                alert('Please answer all questions before submitting.');
+                return;
+            }
+
+            quizCompleted = true;
+            quizSection.classList.remove('active');
+            resultSection.classList.add('active');
+            showResults();
+        }
+
+        function showResults() {
+            const totalQuestions = quizData.length;
+            resultDisplay.textContent = `You scored ${score} out of ${totalQuestions}!`;
+            certificateLink.innerHTML = `<button onclick="generateCertificate()">Get Your Certificate</button>`;
+        }
+
+        function generateCertificate() {
+            resultSection.classList.remove('active');
+            certificateSection.classList.add('active');
+            
+            const totalQuestions = quizData.length;
+            const percentage = (score / totalQuestions) * 100;
+            
+            certName.textContent = userName;
+            certScore.textContent = `${score} / ${totalQuestions} (${percentage.toFixed(2)}%)`;
+            certDate.textContent = new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+    </script>
+
+</body>
+</html>
