@@ -212,8 +212,13 @@
             },
             {
                 question: "What is the correct way to link an external CSS file?",
-                options: ["<style src='style.css'>", "<link rel='stylesheet' href='style.css'>", "<css href='style.css'>", "<stylesheet>style.css</stylesheet>"],
-                answer: "<link rel='stylesheet' href='style.css'>"
+                options: [
+                    "&lt;style src='style.css'&gt;",
+                    "&lt;link rel='stylesheet' href='style.css'&gt;",
+                    "&lt;css href='style.css'&gt;",
+                    "&lt;stylesheet&gt;style.css&lt;/stylesheet&gt;"
+                ],
+                answer: "&lt;link rel='stylesheet' href='style.css'&gt;"
             },
             {
                 question: "What is the purpose of CSS?",
@@ -227,8 +232,8 @@
             },
             {
                 question: "Which HTML tag is used for creating a hyperlink?",
-                options: ["<link>", "<a>", "<href>", "<hlink>"],
-                answer: "<a>"
+                options: ["&lt;link&gt;", "&lt;a&gt;", "&lt;href&gt;", "&lt;hlink&gt;"],
+                answer: "&lt;a&gt;"
             },
             {
                 question: "What is the box model in CSS?",
@@ -272,7 +277,12 @@
             },
             {
                 question: "What is the difference between '==' and '===' in JavaScript?",
-                options: ["'==' checks for value equality, '===' checks for value and type equality", "'==' checks for value and type equality, '===' checks for value equality", "They are identical", "'===' is for strict mode"],
+                options: [
+                    "'==' checks for value equality, '===' checks for value and type equality",
+                    "'==' checks for value and type equality, '===' checks for value equality",
+                    "They are identical",
+                    "'===' is for strict mode"
+                ],
                 answer: "'==' checks for value equality, '===' checks for value and type equality"
             }
         ];
